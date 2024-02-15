@@ -1,35 +1,17 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import gql from "graphql-tag";
 
-// GraphQL Schema
-const typeDefs = gql`
-  type Query {
-    hello(name: String): String
-    test: String!
-    isTrue: Boolean!
-    add(num1: Int, num2: Int): Int!
-    sub(num1: Int, num2: Int): Int!
-    mul(num1: Int, num2: Int): Int!
-    div(num1: Int, num2: Int): Int!
-    combineName(firstName: String, lastName: String): String!
-  }
-`;
+import mongoose from "mongoose";
 
-// GraphQL Resolvers
-const resolvers = {
-  Query: {
-    hello: (_, args) => `Hello ${args.ame}`,
-    test: () => "Test Completo!",
-    isTrue: () => true,
-    add: (_, { num1, num2 }) => num1 + num2,
-    sub: (_, { num1, num2 }) => num1 - num2,
-    mul: (_, { num1, num2 }) => num1 * num2,
-    div: (_, { num1, num2 }) => num1 / num2,
-    combineName: (_, { firstName, lastName }) =>
-      `kiwkiw ${firstName} ${lastName}!`,
-  },
-};
+mongoose
+  .connect("mongodb://127.0.0.1:27017/my_applications")
+  .then(() => {
+    console.log("📚 Connected to db");
+  })
+  .catch((err) => console.error(err));
+
+import { typeDefs } from "./models/typeDefs.js";
+import { resolvers } from "./resolver.js";
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
