@@ -1,17 +1,23 @@
 import { Book } from "./models/Book.js";
+import { User } from "./models/User.js";
 // GraphQL Resolvers
 export const resolvers = {
   Query: {
-    hello: (_, args) => `Hello ${args.name}`,
-    test: () => "Test Completo!",
-    isTrue: () => true,
-    add: (_, { num1, num2 }) => num1 + num2,
-    sub: (_, { num1, num2 }) => num1 - num2,
-    mul: (_, { num1, num2 }) => num1 * num2,
-    div: (_, { num1, num2 }) => num1 / num2,
-    combineName: (_, { firstName, lastName }) =>
-      `kiwkiw ${firstName} ${lastName}!`,
     books: async () => await Book.find({}),
+    user: (_, { firstName, lastName, email, address }) => {
+      return {
+        firstName,
+        lastName,
+        email,
+        address,
+      };
+    },
+    getAllUsers: async () => await User.find(),
+    getUserById: async (_, { id }) => {
+      const res = await User.findById(id);
+      return res;
+      // return res;
+    },
   },
   Mutation: {
     registerUser: (_, { firstName, lastName, email, address }) => {
@@ -50,6 +56,27 @@ export const resolvers = {
         return await Book.findOne({ _id: id });
       }
       return null;
+    },
+    createUser: async (_, { firstName, lastName, email, address }) => {
+      const res = await User.create({ firstName, lastName, email, address });
+      if (res.firstName && res.lastName) return true;
+      return false;
+    },
+    updateUser: async (_, { id, firstName, lastName, email, address }) => {
+      const res = await User.findByIdAndUpdate(id, {
+        firstName,
+        lastName,
+        email,
+        address,
+      });
+      console.log(res);
+      // if (res.firstName && res.lastName) return true;
+      return false;
+    },
+    deleteUser: async (_, { id }) => {
+      const res = await User.findByIdAndDelete(id);
+      if (res === null) return false;
+      return true;
     },
   },
 };
