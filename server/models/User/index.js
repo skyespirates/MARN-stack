@@ -1,9 +1,45 @@
-import { Book } from "./models/Book.js";
-import { User } from "./models/User.js";
-// GraphQL Resolvers
+import gql from "graphql-tag";
+import { User } from "./User.js";
+
+export const typeDefs = `
+  type User {
+    _id: ID!
+    firstName: String!
+    lastName: String!
+    email: String!
+    address: String!
+  }
+
+  type Query {
+    getAllUsers: [User]
+    getUserById(id: ID): User
+    user(
+      firstName: String!
+      lastName: String!
+      email: String!
+      address: String!
+    ): User!
+  }
+
+  type Mutation {
+    createUser(
+      firstName: String!
+      lastName: String!
+      email: String!
+      address: String!
+    ): Boolean
+    updateUser(
+      id: ID!
+      firstName: String
+      lastName: String
+      email: String
+      address: String
+    ): Boolean
+    deleteUser(id: ID): Boolean
+  }
+`;
 export const resolvers = {
   Query: {
-    books: async () => await Book.find({}),
     user: (_, { firstName, lastName, email, address }) => {
       return {
         firstName,
@@ -20,43 +56,6 @@ export const resolvers = {
     },
   },
   Mutation: {
-    registerUser: (_, { firstName, lastName, email, address }) => {
-      const userData = {
-        firstName,
-        lastName,
-        email,
-        address,
-      };
-      return userData;
-    },
-    create: async (_, { title, year }) => {
-      const book = await Book.create({ title, year });
-      return book;
-    },
-    delete: async (_, { id }) => {
-      const result = await Book.deleteOne({ _id: id });
-      if (result.acknowledged && result.deletedCount === 1) {
-        return id;
-      }
-      return null;
-    },
-    edit: async (_, { id, title, year }) => {
-      const result = await Book.updateOne(
-        {
-          _id: id,
-        },
-        {
-          $set: {
-            title,
-            year,
-          },
-        }
-      );
-      if (result.acknowledged && result.modifiedCount === 1) {
-        return await Book.findOne({ _id: id });
-      }
-      return null;
-    },
     createUser: async (_, { firstName, lastName, email, address }) => {
       const res = await User.create({ firstName, lastName, email, address });
       if (res.firstName && res.lastName) return true;
