@@ -7,8 +7,14 @@ import {
   typeDefs as Customer,
   resolvers as customerResolvers,
 } from "./Customer/index.js";
+import { typeDefs as Todo, resolvers as todoResolvers } from "./Todo/index.js";
 
 export default makeExecutableSchema({
-  typeDefs: [Book, User, Customer],
-  resolvers: lodash.merge(bookResolvers, userResolvers, customerResolvers),
+  typeDefs: [Book, User, Customer, Todo],
+  resolvers: lodash.merge(
+    bookResolvers,
+    userResolvers,
+    customerResolvers,
+    todoResolvers
+  ),
 });
