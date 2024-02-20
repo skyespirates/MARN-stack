@@ -1,4 +1,28 @@
 import { NavLink, Outlet } from "react-router-dom";
+
+const links = [
+  {
+    target: "/",
+    title: "home",
+  },
+  {
+    target: "/books",
+    title: "books",
+  },
+  {
+    target: "/users",
+    title: "users",
+  },
+  {
+    target: "/customers",
+    title: "customers",
+  },
+  {
+    target: "/todos",
+    title: "todos",
+  },
+];
+
 const Layout = () => {
   return (
     <div>
@@ -13,8 +37,17 @@ const Layout = () => {
           marginBottom: "24px",
         }}
       >
-        <NavLink to="/">book</NavLink>
-        <NavLink to="/register">register</NavLink>
+        {links.map(({ target, title }, i) => (
+          <NavLink
+            key={i}
+            to={target}
+            className={({ isActive }) =>
+              `text-decoration-none ${isActive ? "text-danger" : ""}`
+            }
+          >
+            {title}
+          </NavLink>
+        ))}
       </nav>
       <main>
         <Outlet />

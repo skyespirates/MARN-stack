@@ -4,11 +4,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-// components
-import Layout from "./components/Layout.jsx";
-import Book from "./components/Book.jsx";
-import Register from "./components/Register.jsx";
-import EditBook from "./components/EditBook.jsx";
+import Layout from "./components/Layout";
+
+// pages
+import Homepage from "./pages/Home";
+import Books from "./pages/Books";
+import Users from "./pages/Users";
+import Customers from "./pages/Customers";
+import Todos from "./pages/Todos";
 
 const router = createBrowserRouter([
   {
@@ -17,15 +20,23 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Book />,
+        element: <Homepage />,
       },
       {
-        path: "register",
-        element: <Register />,
+        path: "books",
+        element: <Books />,
       },
       {
-        path: ":book_id",
-        element: <EditBook />,
+        path: "users",
+        element: <Users />,
+      },
+      {
+        path: "customers",
+        element: <Customers />,
+      },
+      {
+        path: "todos",
+        element: <Todos />,
       },
     ],
   },

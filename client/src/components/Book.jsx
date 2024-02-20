@@ -47,7 +47,6 @@ const Book = () => {
         >
           <div className="mb-5">
             <Form.Group className="mb-3" controlId="title">
-              <Form.Label>Title</Form.Label>
               <Form.Control
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -57,7 +56,6 @@ const Book = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="year">
-              <Form.Label>Year</Form.Label>
               <Form.Control
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
