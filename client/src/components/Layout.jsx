@@ -1,57 +1,25 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
-const links = [
-  {
-    target: "/",
-    title: "home",
-  },
-  {
-    target: "/books",
-    title: "books",
-  },
-  {
-    target: "/users",
-    title: "users",
-  },
-  {
-    target: "/customers",
-    title: "customers",
-  },
-  {
-    target: "/todos",
-    title: "todos",
-  },
-];
+import { Container, Row, Col } from "react-bootstrap";
+import "../styles/Layout.css";
+
+import Navbar from "./Navbar";
+import Sidebar from "./Sidebar";
 
 const Layout = () => {
   return (
     <div>
-      <nav
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          columnGap: "16px",
-          border: "1px solid black",
-          padding: "16px 0",
-          marginBottom: "24px",
-        }}
-      >
-        {links.map(({ target, title }, i) => (
-          <NavLink
-            key={i}
-            to={target}
-            className={({ isActive }) =>
-              `text-decoration-none ${isActive ? "text-danger" : ""}`
-            }
-          >
-            {title}
-          </NavLink>
-        ))}
-      </nav>
-      <main>
-        <Outlet />
-      </main>
+      <Navbar />
+      <Container fluid>
+        <Row>
+          <Col className="sidebar bg-light d-none d-md-block px-3 py-2 " md={2}>
+            <Sidebar />
+          </Col>
+          <Col md={10} className="main ms-sm-auto ">
+            <Outlet />
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 };
