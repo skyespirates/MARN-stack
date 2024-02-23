@@ -6,22 +6,24 @@ export const BOOKS_QUERY = gql`
       id
       title
       year
+      author
     }
   }
 `;
 
 export const BOOK_MUTATION = gql`
-  mutation Mutation($title: String, $year: Int) {
-    create(title: $title, year: $year) {
+  mutation Mutation($title: String!, $year: Int!, $author: String!) {
+    create(title: $title, year: $year, author: $author) {
       id
       title
       year
+      author
     }
   }
 `;
 
 export const DELETE_BOOK_MUTATION = gql`
-  mutation Mutattion($id: ID) {
+  mutation Mutattion($id: ID!) {
     delete(id: $id)
   }
 `;

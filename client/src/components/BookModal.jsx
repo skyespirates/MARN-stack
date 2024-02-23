@@ -8,15 +8,15 @@ import { useState } from "react";
 
 import years from "../utils/years";
 
-import { BOOKS_QUERY, EDIT_BOOK_MUTATION as updateBook } from "../queries";
+import { BOOKS_QUERY, BOOK_MUTATION } from "../queries";
 
-const EditBook = ({ record, show, handleClose }) => {
+const BookModal = ({ show, handleClose }) => {
   const [title, setTitle] = useState("");
   const [releaseDate, setReleaseDate] = useState("");
   const [author, setAuthor] = useState("");
   const [validated, setValidated] = useState(false);
 
-  const [editBook, { loading, error }] = useMutation(updateBook);
+  const [createMutation, { loading, error }] = useMutation(BOOK_MUTATION);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -24,7 +24,7 @@ const EditBook = ({ record, show, handleClose }) => {
     if (form.checkValidity() === false) {
       event.stopPropagation();
     } else {
-      editBook({
+      createMutation({
         variables: {
           title,
           year: parseInt(releaseDate),
@@ -58,12 +58,12 @@ const EditBook = ({ record, show, handleClose }) => {
         >
           <Form.Group className="mb-3" controlId="id">
             <Form.Label>Id</Form.Label>
-            <Form.Control type="text" value={record.id} disabled />
+            <Form.Control type="text" disabled />
           </Form.Group>
           <Form.Group className="mb-3" controlId="title">
             <Form.Label>Title</Form.Label>
             <Form.Control
-              value={record.title}
+              value={title}
               onChange={(e) => setTitle(e.target.value)}
               type="text"
               placeholder="Hamlet"
@@ -73,7 +73,7 @@ const EditBook = ({ record, show, handleClose }) => {
           <Form.Group className="mb-3" controlId="releaseYear">
             <Form.Label>Release Year</Form.Label>
             <Form.Select
-              value={record.year}
+              value={releaseDate}
               onChange={(e) => setReleaseDate(e.target.value)}
               aria-label="Select release year"
               required
@@ -89,7 +89,7 @@ const EditBook = ({ record, show, handleClose }) => {
           <Form.Group className="mb-3" controlId="author">
             <Form.Label>Author</Form.Label>
             <Form.Control
-              value={record.author}
+              value={author}
               onChange={(e) => setAuthor(e.target.value)}
               type="text"
               placeholder="William Shakespeare"
@@ -120,4 +120,4 @@ const EditBook = ({ record, show, handleClose }) => {
   );
 };
 
-export default EditBook;
+export default BookModal;

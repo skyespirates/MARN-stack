@@ -7,7 +7,7 @@ export const typeDefs = `
   }
 
   type Mutation {
-    create(title: String, year: Int): Book
+    create(title: String!, year: Int!, author: String!): Book
     delete(id: ID): ID
     edit(id: ID, title: String, year: Int): Book
   }
@@ -16,6 +16,7 @@ export const typeDefs = `
     id: ID
     title: String
     year: Int
+    author: String
   }
 `;
 
@@ -24,8 +25,8 @@ export const resolvers = {
     books: async () => await Book.find({}),
   },
   Mutation: {
-    create: async (_, { title, year }) => {
-      const book = await Book.create({ title, year });
+    create: async (_, { title, year, author }) => {
+      const book = await Book.create({ title, year, author });
       return book;
     },
     delete: async (_, { id }) => {
