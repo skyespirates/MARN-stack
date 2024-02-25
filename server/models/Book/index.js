@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 import { Book } from "./Book.js";
 
-export const typeDefs = `
+export const typeDefs = gql`
   type Query {
     books: [Book]
   }
@@ -9,7 +9,7 @@ export const typeDefs = `
   type Mutation {
     create(title: String!, year: Int!, author: String!): Book
     delete(id: ID): ID
-    edit(id: ID, title: String, year: Int): Book
+    edit(id: ID, title: String, year: Int, author: String): Book
   }
 
   type Book {
@@ -36,22 +36,23 @@ export const resolvers = {
       }
       return null;
     },
-    edit: async (_, { id, title, year }) => {
-      const result = await Book.updateOne(
-        {
-          _id: id,
-        },
-        {
-          $set: {
-            title,
-            year,
-          },
-        }
-      );
-      if (result.acknowledged && result.modifiedCount === 1) {
-        return await Book.findOne({ _id: id });
+    edit: async (_, { id, title, year, author }) => {
+      try {
+        const book = {
+          id,
+          title,
+          year,
+          author,
+        };
+
+        const updatedBook = await Book.findByIdAndUpdate(id, book, {
+          new: true,
+        });
+        return updatedBook;
+      } catch (error) {
+        console.log(error);
+        process.exit(1);
       }
-      return null;
     },
   },
 };

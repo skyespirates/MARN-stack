@@ -1,14 +1,19 @@
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 
-import { useState } from "react";
+import { useState, Suspense, useEffect } from "react";
 
+// components
 import TableRow from "../components/TableRow";
 import BookModal from "../components/BookModal";
 import EditBook from "../components/EditBook";
+import Pagination from "../components/Pagination";
+import Loader from "../components/Loader";
 
-import { useQuery } from "@apollo/client";
+import { useSuspenseQuery } from "@apollo/client";
 import { BOOKS_QUERY } from "../queries";
+
+const size = 2;
 
 const Books = () => {
   const [show, setShow] = useState(false);
@@ -19,16 +24,24 @@ const Books = () => {
 
   const openEdit = () => setEdit(true);
   const closeEdit = () => setEdit(false);
+  const { data } = useSuspenseQuery(BOOKS_QUERY);
 
-  const temp = {
-    author: "Tere Liye",
-    id: "65d824e7a2646921d3dd5301",
-    title: "bumi",
-    year: 2011,
-    __typename: "Book",
-  };
+  const [page, setPage] = useState(1);
+  const [from, setFrom] = useState(0);
+  const [to, setTo] = useState(size);
 
-  const { data, loading, error } = useQuery(BOOKS_QUERY);
+  const totalPages = Math.ceil(data.books.length / size);
+
+  // const temp = data.books.slice(from, to);
+  // console.log(temp);
+
+  useEffect(() => {
+    const f = (page - 1) * size;
+    const t = f + size;
+
+    setFrom(f);
+    setTo(t);
+  }, [page]);
 
   return (
     <div>
@@ -41,7 +54,7 @@ const Books = () => {
         </div>
         <div>
           <BookModal show={show} handleClose={handleClose} />
-          <EditBook record={temp} show={edit} handleClose={closeEdit} />
+          <EditBook show={edit} handleClose={closeEdit} />
         </div>
         <Table bordered>
           <thead>
@@ -60,32 +73,26 @@ const Books = () => {
             </tr>
           </thead>
           <tbody>
-            {loading && (
-              <tr>
-                <td valign="middle" colSpan={5}>
-                  <p className="text-center mb-0">Loading..</p>
-                </td>
-              </tr>
-            )}
-            {error && (
-              <tr>
-                <td valign="middle" colSpan={5}>
-                  <p className="text-center mb-0">{error.message}</p>
-                </td>
-              </tr>
-            )}
-
-            {data &&
-              data.books.map((record, i) => (
-                <TableRow
-                  key={record.id}
-                  record={record}
-                  no={i + 1}
-                  openEdit={openEdit}
-                />
-              ))}
+            <Suspense fallback={<Loader />}>
+              {data.books.length > 0 &&
+                data.books
+                  .slice(from, to)
+                  .map((record, i) => (
+                    <TableRow
+                      key={record.id}
+                      record={record}
+                      no={i + 1}
+                      openEdit={openEdit}
+                    />
+                  ))}
+            </Suspense>
           </tbody>
         </Table>
+        <Suspense fallback={<></>}>
+          <div className="d-flex justify-content-center ">
+            <Pagination totalPages={totalPages} page={page} setPage={setPage} />
+          </div>
+        </Suspense>
       </div>
     </div>
   );

@@ -44,8 +44,15 @@ const BookModal = ({ show, handleClose }) => {
     setValidated(true);
   };
 
+  const closeModal = () => {
+    setTitle("");
+    setReleaseDate("");
+    setAuthor("");
+    handleClose();
+  };
+
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={closeModal}>
       <Modal.Header closeButton>
         <Modal.Title>Add Book</Modal.Title>
       </Modal.Header>
@@ -100,18 +107,11 @@ const BookModal = ({ show, handleClose }) => {
             <p className="lead text-danger text-end">{error.message}</p>
           )}
           <Form.Group className="mb-3 d-flex justify-content-end column-gap-2 ">
-            <Button
-              disabled={loading}
-              variant="secondary"
-              onClick={handleClose}
-            >
+            <Button disabled={loading} variant="secondary" onClick={closeModal}>
               Close
             </Button>
             <Button disabled={loading} type="submit" variant="primary">
               Submit
-            </Button>
-            <Button disabled={loading} type="submit" variant="success">
-              Update
             </Button>
           </Form.Group>
         </Form>

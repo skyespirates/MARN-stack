@@ -1,11 +1,21 @@
 import Button from "react-bootstrap/Button";
 import styles from "../styles/TableRow.module.css";
 
+import { setSelectedBook } from "../slices/bookSlice";
+import { useDispatch } from "react-redux";
+
 import { useMutation } from "@apollo/client";
 import { DELETE_BOOK_MUTATION, BOOKS_QUERY } from "../queries";
 
 const TableRow = ({ no, record, openEdit }) => {
   const [deleteBook] = useMutation(DELETE_BOOK_MUTATION);
+
+  const dispatch = useDispatch();
+
+  const handleClick = () => {
+    dispatch(setSelectedBook(record));
+    openEdit();
+  };
 
   return (
     <tr>
@@ -22,7 +32,7 @@ const TableRow = ({ no, record, openEdit }) => {
         {record.author}
       </td>
       <td valign="middle">
-        <Button onClick={openEdit}>
+        <Button onClick={handleClick}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"

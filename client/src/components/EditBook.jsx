@@ -4,16 +4,17 @@ import Form from "react-bootstrap/Form";
 
 import { useMutation } from "@apollo/client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { useSelector } from "react-redux";
 
 import years from "../utils/years";
 
 import { BOOKS_QUERY, EDIT_BOOK_MUTATION as updateBook } from "../queries";
 
-const EditBook = ({ record, show, handleClose }) => {
-  const [title, setTitle] = useState("");
-  const [releaseDate, setReleaseDate] = useState("");
-  const [author, setAuthor] = useState("");
+const EditBook = ({ show, handleClose }) => {
+  const record = useSelector((state) => state.book.selectedBook);
+
   const [validated, setValidated] = useState(false);
 
   const [editBook, { loading, error }] = useMutation(updateBook);
@@ -21,20 +22,27 @@ const EditBook = ({ record, show, handleClose }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = event.currentTarget;
+
+    const title = document.getElementById("title").value;
+    const year = parseInt(document.getElementById("year").value);
+    const author = document.getElementById("author").value;
+
+    const data = {
+      id: record.id,
+      title,
+      year,
+      author,
+    };
+
     if (form.checkValidity() === false) {
       event.stopPropagation();
     } else {
       editBook({
         variables: {
-          title,
-          year: parseInt(releaseDate),
-          author,
+          ...data,
         },
         refetchQueries: [BOOKS_QUERY],
         onCompleted: () => {
-          setTitle("");
-          setReleaseDate("");
-          setAuthor("");
           handleClose();
           setValidated(false);
         },
@@ -47,7 +55,7 @@ const EditBook = ({ record, show, handleClose }) => {
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Add Book</Modal.Title>
+        <Modal.Title>Edit Book</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form
@@ -63,18 +71,16 @@ const EditBook = ({ record, show, handleClose }) => {
           <Form.Group className="mb-3" controlId="title">
             <Form.Label>Title</Form.Label>
             <Form.Control
-              value={record.title}
-              onChange={(e) => setTitle(e.target.value)}
+              defaultValue={record.title}
               type="text"
               placeholder="Hamlet"
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="releaseYear">
+          <Form.Group className="mb-3" controlId="year">
             <Form.Label>Release Year</Form.Label>
             <Form.Select
-              value={record.year}
-              onChange={(e) => setReleaseDate(e.target.value)}
+              defaultValue={record.year}
               aria-label="Select release year"
               required
             >
@@ -89,8 +95,7 @@ const EditBook = ({ record, show, handleClose }) => {
           <Form.Group className="mb-3" controlId="author">
             <Form.Label>Author</Form.Label>
             <Form.Control
-              value={record.author}
-              onChange={(e) => setAuthor(e.target.value)}
+              defaultValue={record.author}
               type="text"
               placeholder="William Shakespeare"
               required
@@ -106,9 +111,6 @@ const EditBook = ({ record, show, handleClose }) => {
               onClick={handleClose}
             >
               Close
-            </Button>
-            <Button disabled={loading} type="submit" variant="primary">
-              Submit
             </Button>
             <Button disabled={loading} type="submit" variant="success">
               Update
